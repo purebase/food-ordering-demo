@@ -59,4 +59,9 @@ class FoodOrderingController {
                 ResponseTypes.instanceOf(FoodCartView.class)
         );
     }
+
+    @GetMapping("hello/{name}")
+    public String hello(@PathVariable("name") String name) {
+        return "hello "+ name;
+    }
 }
