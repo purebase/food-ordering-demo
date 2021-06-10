@@ -1,4 +1,4 @@
-package io.axoniq.foodordering.coreapi
+package io.axoniq.foodordering.domain
 
 import java.util.*
 

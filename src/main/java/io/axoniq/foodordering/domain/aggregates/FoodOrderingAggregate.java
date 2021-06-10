@@ -1,14 +1,14 @@
-package io.axoniq.foodordering.command;
+package io.axoniq.foodordering.domain.aggregates;
 
-import io.axoniq.foodordering.coreapi.ConfirmOrderCommand;
-import io.axoniq.foodordering.coreapi.CreateFoodCartCommand;
-import io.axoniq.foodordering.coreapi.DeselectProductCommand;
-import io.axoniq.foodordering.coreapi.FoodCartCreatedEvent;
-import io.axoniq.foodordering.coreapi.OrderConfirmedEvent;
-import io.axoniq.foodordering.coreapi.ProductDeselectedEvent;
-import io.axoniq.foodordering.coreapi.ProductDeselectionException;
-import io.axoniq.foodordering.coreapi.ProductSelectedEvent;
-import io.axoniq.foodordering.coreapi.SelectProductCommand;
+import io.axoniq.foodordering.domain.ConfirmOrderCommand;
+import io.axoniq.foodordering.domain.CreateFoodCartCommand;
+import io.axoniq.foodordering.domain.DeselectProductCommand;
+import io.axoniq.foodordering.domain.FoodCartCreatedEvent;
+import io.axoniq.foodordering.domain.OrderConfirmedEvent;
+import io.axoniq.foodordering.domain.ProductDeselectedEvent;
+import io.axoniq.foodordering.domain.ProductDeselectionException;
+import io.axoniq.foodordering.domain.ProductSelectedEvent;
+import io.axoniq.foodordering.domain.SelectProductCommand;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -22,31 +22,31 @@ import java.util.Map;
 import java.util.UUID;
 
 @Aggregate
-class FoodCart {
+class FoodOrderingAggregate {
 
-    private static final Logger logger = LoggerFactory.getLogger(FoodCart.class);
+    private static final Logger logger = LoggerFactory.getLogger(FoodOrderingAggregate.class);
 
     @AggregateIdentifier
     private UUID foodCartId;
     private Map<UUID, Integer> selectedProducts;
     private boolean confirmed;
 
-    public FoodCart() {
+    public FoodOrderingAggregate() {
         // Required by Axon
     }
 
     @CommandHandler
-    public FoodCart(CreateFoodCartCommand command) {
+    public FoodOrderingAggregate(CreateFoodCartCommand command) {
         AggregateLifecycle.apply(new FoodCartCreatedEvent(command.getFoodCartId()));
     }
 
     @CommandHandler
-    public void handle(SelectProductCommand command) {
+    public void on(SelectProductCommand command) {
         AggregateLifecycle.apply(new ProductSelectedEvent(foodCartId, command.getProductId(), command.getQuantity()));
     }
 
     @CommandHandler
-    public void handle(DeselectProductCommand command) throws ProductDeselectionException {
+    public void on(DeselectProductCommand command) throws ProductDeselectionException {
         UUID productId = command.getProductId();
         int quantity = command.getQuantity();
 
@@ -65,7 +65,7 @@ class FoodCart {
     }
 
     @CommandHandler
-    public void handle(ConfirmOrderCommand command) {
+    public void on(ConfirmOrderCommand command) {
         if (confirmed) {
             logger.warn("Cannot confirm a Food Cart order which is already confirmed");
             return;

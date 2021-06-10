@@ -1,4 +1,4 @@
-package io.axoniq.foodordering.query
+package io.axoniq.foodordering.domain.queries
 
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
